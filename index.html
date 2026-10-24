@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E31D2B">
+<title>☯️ อี้จิง | ตำราทำนายจากเส้นหยินหยาง</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== ธีม "รอยสักดอกไม้สไตล์ญี่ปุ่น" — สัดส่วนสี 60/30/10 ===== */
+:root{
+  --bg:#1A1A1A;      /* 60% พื้นหลังหลัก */
+  --card:#242424; --card2:#2F2F2F;
+  --text:#FAF8F6;    /* 30% ข้อความหลัก */
+  --mute:#B5B1AA;    /* ข้อความรอง/ปิดใช้งาน */
+  --red:#E31D2B; --red-hi:#FF5A64;  /* 10% สีหลัก */
+  --gold:#F5D374;    /* สีเน้น */
+  --sage:#A3BFA5;    /* สีรอง */
+  --line:rgba(250,248,246,.12);
+  --fd:'Kanit','Noto Sans Thai',system-ui,sans-serif;
+  --fb:'Sarabun','Noto Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);line-height:1.5;overscroll-behavior:none}
+body{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;
+  -webkit-text-size-adjust:100%;line-break:auto;word-break:normal;overflow-wrap:break-word}
+h1,h2,h3{font-family:var(--fd);margin:0;text-wrap:balance}
+p{margin:0}
+button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ===== โครงหลัก: ทุกหน้าพอดี 1 จอ (ฟอนต์ปรับอัตโนมัติด้วย --k จาก JS) ===== */
+#app{flex:1;display:flex;flex-direction:column;max-width:480px;width:100%;margin:0 auto;min-height:0}
+header.topbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) 16px 10px;
+  background:
+    radial-gradient(circle at 12% 120%,rgba(255,255,255,.16) 0 14px,transparent 15px),
+    radial-gradient(circle at 88% -20%,rgba(255,255,255,.14) 0 22px,transparent 23px),
+    linear-gradient(135deg,#C8101E,var(--red));
+  border-radius:0 0 22px 22px}
+.topbar .glyph{font-size:30px;line-height:1}
+.topbar .titles{flex:1;min-width:0}
+.topbar h1{font-size:21px;font-weight:700;color:#fff;line-height:1.25}
+.topbar .sub{font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.3px}
+main{flex:1 1 auto;min-height:0;padding:10px 14px 4px;overflow-y:auto;
+  font-size:15px;font-size:calc(clamp(14px,2.1vh,17px)*var(--k,1))}
+.view{display:none;min-height:100%;flex-direction:column;gap:.5em;animation:fade .3s ease}
+.view.active{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+nav.tabbar{flex:0 0 auto;display:flex;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:#141414;border-top:1px solid var(--line)}
+nav.tabbar button{flex:1;min-height:52px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  background:transparent;border:0;border-radius:14px;color:var(--mute);font-size:13px;font-weight:600;white-space:nowrap;transition:background .2s,color .2s}
+nav.tabbar .ic{font-size:21px;line-height:1.1}
+nav.tabbar button.active{color:#fff;background:var(--red)}
+
+/* ===== คอมโพเนนต์ ===== */
+.card{background:var(--card);border-radius:16px;padding:.7em .9em;border:1px solid var(--line)}
+.card.paper{background:var(--sage);color:#1A1A1A;border:0}
+.eyebrow{display:block;font-size:.85em;color:var(--gold);font-weight:700;margin-bottom:.3em}
+.hint{font-size:.9em;color:var(--mute)}
+.btn{display:flex;align-items:center;justify-content:center;gap:.4em;width:100%;min-height:48px;padding:0 20px;border:0;border-radius:999px;font-weight:700;font-size:1.1em}
+.btn-primary{background:var(--red);color:#fff}
+.btn-primary:active{background:#B8101D}
+.btn-primary:disabled{background:#3A3A3A;color:var(--mute);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn-sage{background:var(--sage);color:#1A1A1A}
+textarea{width:100%;background:var(--bg);color:var(--text);border:1.5px solid var(--line);border-radius:12px;padding:.6em .8em;
+  font-family:inherit;font-size:max(16px,1em);line-height:1.4;resize:none}
+textarea:focus{border-color:var(--red-hi);outline:0}
+textarea::placeholder{color:var(--mute)}
+.icon-btn{flex-shrink:0;width:44px;height:44px;border-radius:50%;border:0;font-size:18px;display:flex;align-items:center;justify-content:center;
+  background:rgba(26,26,26,.14);color:#1A1A1A}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn.dark{background:var(--card2);color:var(--text)}
+
+/* ===== สัญลักษณ์เกวา (เส้นหยิน/หยาง) ===== */
+.hexagram{display:flex;flex-direction:column-reverse;gap:5px;width:56px;flex-shrink:0}
+.hexline{height:7px;border-radius:3px;background:var(--gold);position:relative}
+.hexline.yin{background:transparent}
+.hexline.yin::before,.hexline.yin::after{content:"";position:absolute;top:0;height:100%;width:42%;background:var(--gold);border-radius:3px}
+.hexline.yin::before{left:0}.hexline.yin::after{right:0}
+.hexline.placeholder{background:rgba(250,248,246,.12)}
+.hexline.draw{animation:draw .45s ease both}
+@keyframes draw{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+.hexline.moving{box-shadow:0 0 0 2px var(--red-hi)}
+.hex-row{display:flex;align-items:center;gap:12px}
+.hex-meta{min-width:0;flex:1}
+.hex-meta .name{font-family:var(--fd);font-size:1.25em;font-weight:700;line-height:1.3}
+.hex-meta .desc{font-size:.9em;color:var(--mute)}
+.card.paper .desc{color:#2F3A30}
+.badge{display:inline-block;font-size:.85em;font-weight:700;padding:1px 10px;border-radius:999px;margin-top:2px}
+
+/* ===== หน้าแรก ===== */
+.hero{position:relative;overflow:hidden;background:var(--card);border:1.5px solid var(--red);border-radius:18px;padding:.8em .9em}
+.hero::after{content:"牡丹";position:absolute;right:-4px;bottom:-14px;font-size:5.2em;color:rgba(227,29,43,.14);font-family:serif;pointer-events:none}
+.hero .date{font-size:.9em;color:var(--sage);font-weight:600}
+.hero h2{font-size:1.3em;color:var(--red-hi);margin:.1em 0 .5em}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5em;margin-top:.7em;position:relative;z-index:1}
+.stat{background:var(--card2);border-radius:12px;padding:.5em .7em}
+.stat .num{font-family:var(--fd);font-size:1.3em;font-weight:700;color:var(--gold)}
+.stat .lbl{font-size:.85em;color:var(--mute)}
+.chip-row{display:flex;flex-wrap:wrap;gap:.4em}
+.chip{display:inline-flex;align-items:center;gap:.25em;background:var(--card2);border:0;border-radius:999px;padding:.3em .8em;
+  font-family:inherit;font-size:.9em;font-weight:600;color:var(--text);white-space:nowrap}
+button.chip{min-height:44px;border:1px solid var(--red)}
+button.chip:active{background:var(--red)}
+
+/* ===== คำนวณ (โยนเหรียญ) ===== */
+.coin-stage{display:flex;justify-content:center;gap:12px;margin:.3em 0}
+.coin{width:2.6em;height:2.6em;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,var(--gold),#B8923A);color:#1A1A1A;font-family:var(--fd);font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.coin.flip{animation:flip .55s ease}
+@keyframes flip{50%{transform:rotateY(360deg) scale(1.15)}to{transform:rotateY(720deg)}}
+.progress-track{height:7px;background:var(--card2);border-radius:4px;overflow:hidden;margin:.4em 0 .3em}
+.progress-fill{height:100%;width:0;background:var(--red);transition:width .35s ease}
+.progress-label{font-size:.9em;color:var(--mute);text-align:center;font-weight:600}
+
+/* ===== สรุปผล / ฟันธง ===== */
+.topics-grid{display:grid;grid-template-columns:1fr 1fr;gap:.35em;align-content:start}
+.topic-cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.35em .6em}
+.topic-cell.full{grid-column:1/-1}
+.topic-cell .ti{font-size:.85em;font-weight:700;color:var(--gold)}
+.topic-cell .tx{font-size:.88em;color:var(--text);line-height:1.35}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.6em;padding:1em}
+.empty-state .ic{font-size:3em}
+.empty-state h3{font-size:1.3em}
+.empty-state p{color:var(--mute)}
+.detail-text{font-size:1em;line-height:1.5;white-space:pre-line}
+.fill{flex:1;display:flex;flex-direction:column;min-height:0;gap:.4em}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="glyph">☯️</div>
+    <div class="titles">
+      <h1>อี้จิง โบราณลิขิต</h1>
+      <div class="sub">🎋 I CHING · เส้นหยินหยางบอกเหตุ</div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 🏮 หน้าแรก -->
+    <section class="view active" id="view-dashboard">
+      <div class="hero">
+        <div class="date">📅 <span id="dash-date">—</span></div>
+        <h2>🌤️ เกวาประจำวันนี้</h2>
+        <div class="hex-row">
+          <div class="hexagram" id="dash-hex"></div>
+          <div class="hex-meta">
+            <div class="name" id="dash-name">—</div>
+            <div class="desc" id="dash-desc">—</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="num" id="dash-tier">—</div><div class="lbl">🔮 ระดับดวงวันนี้</div></div>
+          <div class="stat"><div class="num" id="dash-yang">—</div><div class="lbl">☀️ เส้นหยาง / 6</div></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="switchView('calc')">🪙 เริ่มทำนายคำถามของคุณ</button>
+      <div class="card">
+        <span class="eyebrow" id="dash-chip-title">📚 หัวข้อคำทำนายในตำรานี้</span>
+        <div class="chip-row" id="dash-chip-row">
+          <span class="chip">🌌 ภาพพจน์</span><span class="chip">🌤️ สถานการณ์</span><span class="chip">⭐ ความปรารถนา</span>
+          <span class="chip">💕 ความรัก</span><span class="chip">💍 แต่งงาน</span><span class="chip">💰 การเงิน</span>
+          <span class="chip">🎲 เสี่ยงโชค</span><span class="chip">🧭 เดินทาง</span><span class="chip">🤝 เจรจา</span>
+          <span class="chip">⏳ รอคอย</span><span class="chip">💡 คำแนะนำ</span><span class="chip">❓ ถาม-ตอบ</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🪙 คำนวณ -->
+    <section class="view" id="view-calc">
+      <div class="card">
+        <span class="eyebrow">🧘 ขั้นที่ 1 · ตั้งจิตนิ่ง</span>
+        <p class="hint" style="margin-bottom:.4em">✍️ พิมพ์คำถามที่อยากทราบ (ไม่พิมพ์ก็ได้)</p>
+        <textarea id="question-input" rows="2" maxlength="120" aria-label="คำถาม"></textarea>
+      </div>
+      <div class="card fill">
+        <span class="eyebrow">🪙 ขั้นที่ 2 · โยนเหรียญทีละเส้น</span>
+        <p class="hint">แตะปุ่ม 6 ครั้ง เพื่อสร้างเส้นเกวาจากล่างขึ้นบน</p>
+        <div class="coin-stage">
+          <div class="coin" id="coin1">陽</div><div class="coin" id="coin2">陰</div><div class="coin" id="coin3">陽</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div style="display:flex;align-items:center;gap:6px;min-height:44px">
+          <div class="progress-label" id="progress-label" style="flex:1"></div>
+          <button class="icon-btn dark" id="undo-btn" onclick="undoLine()" aria-label="ย้อนเส้นล่าสุด" style="display:none">↩️</button>
+        </div>
+        <div class="hexagram" id="calc-hex" style="margin:auto"></div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto">
+          <button class="btn btn-primary" id="toss-btn" onclick="tossLine()"></button>
+          <button class="btn btn-ghost" id="reset-btn" onclick="resetCast()" style="display:none">🔄 เริ่มทำนายใหม่</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📜 สรุปผล -->
+    <section class="view" id="view-details">
+      <div id="details-empty" class="empty-state">
+        <div class="ic">☯️</div><h3>🈳 ยังไม่มีผลคำทำนาย</h3>
+        <p>ไปที่ “คำนวณ” เพื่อโยนเหรียญเปิดเกวาก่อน</p>
+        <button class="btn btn-primary" onclick="switchView('calc')">🪙 ไปทำนายเลย</button>
+      </div>
+      <div id="details-content" class="fill" style="display:none">
+        <div class="card paper">
+          <div class="hex-row">
+            <div class="hexagram" id="det-hex"></div>
+            <div class="hex-meta"><div class="name" id="det-name"></div><div class="desc" id="det-code"></div><span class="badge" id="det-tier"></span></div>
+            <button class="icon-btn" onclick="shareResult(this)" aria-label="แชร์ผลทำนาย">📤</button>
+          </div>
+        </div>
+        <div class="topics-grid" id="topics-grid"></div>
+        <button class="btn btn-sage" style="margin-top:auto" onclick="switchView('calc')">🔄 ทำนายคำถามใหม่</button>
+      </div>
+    </section>
+
+    <!-- 🔮 ฟันธง -->
+    <section class="view" id="view-verdict">
+      <div id="verdict-empty" class="empty-state">
+        <div class="ic">🔮</div><h3>🈳 ยังไม่มีคำถามให้ฟันธง</h3>
+        <p>ไปที่ “คำนวณ” เพื่อโยนเหรียญเปิดเกวาก่อน</p>
+        <button class="btn btn-primary" onclick="switchView('calc')">🪙 ไปทำนายเลย</button>
+      </div>
+      <div id="verdict-content" class="fill" style="display:none">
+        <div class="card paper">
+          <div class="hex-row">
+            <div class="hexagram" id="vd-hex"></div>
+            <div class="hex-meta"><div class="name" id="vd-name"></div><div class="desc" id="vd-code"></div><span class="badge" id="vd-tier"></span></div>
+            <button class="icon-btn" onclick="shareResult(this)" aria-label="แชร์ผลทำนาย">📤</button>
+          </div>
+        </div>
+        <div class="card"><span class="eyebrow">🌌 ภาพพจน์</span><p class="detail-text" id="vd-image-text"></p></div>
+        <div class="card"><span class="eyebrow">❓ คำตอบฟันธง</span><p class="detail-text" id="vd-answer-text"></p></div>
+        <div class="card"><span class="eyebrow">💡 คำแนะนำ</span><p class="detail-text" id="vd-advice-text"></p></div>
+        <button class="btn btn-sage" style="margin-top:auto" onclick="switchView('calc')">🔄 ทำนายคำถามใหม่</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="active" data-view="dashboard" onclick="switchView('dashboard')"><span class="ic">🏮</span>หน้าแรก</button>
+    <button data-view="calc" onclick="switchView('calc')"><span class="ic">🪙</span>คำนวณ</button>
+    <button data-view="details" onclick="switchView('details')"><span class="ic">📜</span>สรุปผล</button>
+    <button data-view="verdict" onclick="switchView('verdict')"><span class="ic">🔮</span>ฟันธง</button>
+  </nav>
+</div>
+
+<script>
+/* =========================================================================
+   อี้จิง (I CHING) — ข้อมูลตรีลักษณ์ (8 Trigrams) + กลไกสร้างเกวา 64 แบบ
+   ========================================================================= */
+
+// bits เรียงจาก [ล่าง, กลาง, บน] : 1 = หยาง (เส้นทึบ) , 0 = หยิน (เส้นแยก)
+const TRIGRAMS = [
+  { key:'chian', symbol:'☰', name:'เฉียน', meaning:'ฟ้า',     element:'โลหะ', bits:[1,1,1] },
+  { key:'tui',   symbol:'☱', name:'ตุ้ย',   meaning:'บึง',     element:'โลหะ', bits:[1,1,0] },
+  { key:'li',    symbol:'☲', name:'หลี',    meaning:'ไฟ',      element:'ไฟ',   bits:[1,0,1] },
+  { key:'jen',   symbol:'☳', name:'เจิ้น',  meaning:'ฟ้าร้อง', element:'ไม้',   bits:[1,0,0] },
+  { key:'sun',   symbol:'☴', name:'ซวิ่น',  meaning:'ลม',      element:'ไม้',   bits:[0,1,1] },
+  { key:'kan',   symbol:'☵', name:'คาน',    meaning:'น้ำ',     element:'น้ำ',   bits:[0,1,0] },
+  { key:'ken',   symbol:'☶', name:'เกิ้น',  meaning:'ภูเขา',   element:'ดิน',   bits:[0,0,1] },
+  { key:'kun',   symbol:'☷', name:'คุน',    meaning:'ดิน',     element:'ดิน',   bits:[0,0,0] },
+];
+function findTrigram(bits){
+  return TRIGRAMS.find(t => t.bits[0]===bits[0] && t.bits[1]===bits[1] && t.bits[2]===bits[2]) || TRIGRAMS[0];
+}
+
+const TIERS = [
+  { label:'ต้องระวังยิ่ง', color:'#FF5A64', emoji:'❌' },
+  { label:'ควรระวัง',      color:'#F5A05A', emoji:'⚠️' },
+  { label:'ปานกลาง',       color:'#F5D374', emoji:'➖' },
+  { label:'ดี',             color:'#A3BFA5', emoji:'✅' },
+  { label:'มงคลยิ่ง',       color:'#6FD39A', emoji:'🌟' },
+];
+
+// วงจรธาตุทั้ง 5 (ปัญจธาตุ) — ใช้ปรับความแม่นยำของระดับดวงตามความสัมพันธ์ของธาตุบน-ล่าง
+const GENERATES = { 'ไม้':'ไฟ', 'ไฟ':'ดิน', 'ดิน':'โลหะ', 'โลหะ':'น้ำ', 'น้ำ':'ไม้' };
+const OVERCOMES = { 'ไม้':'ดิน', 'ดิน':'น้ำ', 'น้ำ':'ไฟ', 'ไฟ':'โลหะ', 'โลหะ':'ไม้' };
+
+function wuxingRelation(lowerEl, upperEl){
+  if(lowerEl === upperEl) return { bonus:1, label:`ธาตุ${lowerEl}เสริมพลังกัน` };
+  if(GENERATES[lowerEl] === upperEl) return { bonus:1, label:`ธาตุ${lowerEl}เกื้อหนุนธาตุ${upperEl}` };
+  if(GENERATES[upperEl] === lowerEl) return { bonus:-1, label:`ธาตุ${upperEl}สูญพลังให้ธาตุ${lowerEl}` };
+  if(OVERCOMES[lowerEl] === upperEl) return { bonus:-1, label:`ธาตุ${lowerEl}ข่มธาตุ${upperEl}` };
+  if(OVERCOMES[upperEl] === lowerEl) return { bonus:0, label:`ธาตุ${upperEl}ควบคุมธาตุ${lowerEl}` };
+  return { bonus:0, label:'ธาตุเป็นกลาง' };
+}
+
+/* ---------- คลังคำทำนายสั้น กระชับ อ่านง่ายในตารางแบบจอเดียว (5 ระดับ 0=ระวังยิ่ง...4=มงคลยิ่ง) ---------- */
+const BANK = {
+  general:  ["เหตุการณ์ผันผวน มีอุปสรรคแฝงอยู่ ตั้งสติให้มั่น","สถานการณ์ไม่นิ่ง ต้องปรับตัวบ่อย อย่าตัดสินใจใหญ่ตอนนี้","ทุกอย่างสมดุล ผลลัพธ์ขึ้นอยู่กับการกระทำของท่าน","จังหวะกำลังดี โอกาสเปิดกว้าง รู้จักก้าวออกไป","ดวงเอื้ออำนวยมาก สิ่งที่ตั้งใจกำลังเข้ารูปเข้ารอย"],
+  wish:     ["ความหวังยังไกล ต้องอดทนปรับกลยุทธ์ใหม่","มีโอกาสสำเร็จ แต่ต้องใช้ความพยายามเพิ่ม","โอกาสสำเร็จปานกลาง ทำต่อเนื่องจะเห็นผล","ความหวังใกล้เป็นจริง อย่าใจร้อนเกินไป","ใกล้สำเร็จแล้ว กล้าตัดสินใจตอนนี้"],
+  love:     ["ความสัมพันธ์สั่นคลอน ควรคุยให้เข้าใจกันโดยเร็ว","ยังไม่นิ่ง มีบททดสอบ ฟังกันให้มากขึ้น","ราบเรียบตามครรลอง มั่นคงพอประมาณ","กำลังแน่นแฟ้นขึ้น เปิดใจให้มากกว่านี้","รุ่งโรจน์ เหมาะแก่การกระชับความสัมพันธ์"],
+  marriage: ["ยังไม่ควรรีบ ทำความเข้าใจกันก่อน","ปรึกษาผู้ใหญ่ วางแผนการเงินให้รอบคอบ","จังหวะเป็นกลาง ปล่อยไปตามธรรมชาติ","เหมาะแก่การหมั้นหมายหรือวางแผนร่วมกัน","ดวงคู่แข็งแรง จังหวะทองของการตัดสินใจ"],
+  finance:  ["การเงินตึงตัว ระวังรายจ่ายไม่จำเป็น","ผันผวน มีเข้ามีออก ควรมีเงินสำรอง","สมดุลพอประมาณ ไม่ขาดไม่เกิน","มีแนวโน้มดีขึ้น รายรับเพิ่มจากความพยายาม","แข็งแกร่ง เหมาะลงทุนระยะยาวอย่างมีสติ"],
+  luck:     ["เลี่ยงการเสี่ยงโชค โอกาสเสียมีสูงกว่า","ผลไม่แน่นอน กำหนดเพดานความเสี่ยงไว้","ปานกลาง ได้เสียสลับกัน อย่าทุ่มหนัก","มีเกณฑ์ได้ลาภไม่คาดคิด อย่าประมาท","โชคแรง คว้าโอกาสแต่ใช้เหตุผลกำกับ"],
+  travel:   ["เลื่อนการเดินทางไกลออกไปก่อน","มีอุปสรรคเล็กน้อย ออกเดินทางแต่เนิ่นๆ","ราบรื่นตามปกติ ไม่มีอะไรขัดขวาง","เหมาะเดินทางเพื่อธุรกิจหรือโอกาสใหม่","ไปดีมาก อาจนำโชคที่ไม่คาดฝัน"],
+  negotiate:["ฝืดเคือง ฟังมากกว่าพูด อย่าเร่งรัด","ต้องอดทนสูง ใช้เหตุผลมากกว่าอารมณ์","ไปตามครรลอง ทั้งสองฝ่ายประนีประนอม","มีแนวโน้มสำเร็จ เสนอข้อเสนอชัดเจน","ราบรื่นเป็นพิเศษ อีกฝ่ายพร้อมตกลง"],
+  waiting:  ["ยังติดขัด ต้องใช้เวลาอีกพักใหญ่","คืบหน้าช้าแต่มา อดทนรอสัญญาณ","สถานการณ์นิ่ง ไม่เปลี่ยนแปลงมากนัก","มีข่าวคืบหน้าเร็วๆ นี้ เตรียมใจ","กำลังจะกลับมาให้คำตอบที่น่าพอใจ"],
+  advice:   ["ถอยหนึ่งก้าว อย่าฝืนสถานการณ์","ระวังคำพูดและการตัดสินใจหุนหันพลันแล่น","ทำตามปกติอย่างมีสติ ไม่ต้องเร่ง","ลงมือทำได้เลย แต่เผื่อแผนสำรอง","ช่วงเวลาทอง คว้าไว้ด้วยความมั่นใจ"],
+  liquidity:["เงินหมุนฝืด ควบคุมรายจ่ายเข้มงวด","สภาพคล่องไม่แน่นอน สำรองเงินสดไว้","หมุนเวียนพอดี ไม่ตึงมือจนเกินไป","คล่องตัวขึ้น กระแสเงินสดดีขึ้น","คล่องตัวมาก มีเงินสำรองเหลือเฟือ"],
+  fortune:  ["โชคลาภยังไม่เปิด อย่าฝืนดวง","มีลุ้นเล็กน้อย แต่ไม่ควรหวังมาก","โชคลาภปานกลาง มาเป็นครั้งคราว","มีเกณฑ์ลาภก้อนใหม่เข้ามา","โชคลาภเปิดกว้าง รับทรัพย์ง่ายช่วงนี้"],
+};
+
+const TOPIC_LIST = [
+  { key:'general',   em:'🌤️', title:'สถานการณ์' },
+  { key:'wish',      em:'⭐',  title:'ความปรารถนา' },
+  { key:'love',      em:'💕',  title:'ความรัก' },
+  { key:'marriage',  em:'💍',  title:'แต่งงาน' },
+  { key:'finance',   em:'💰',  title:'การเงิน' },
+  { key:'luck',      em:'🎲',  title:'เสี่ยงโชค' },
+  { key:'travel',    em:'🧭',  title:'เดินทาง' },
+  { key:'negotiate', em:'🤝',  title:'เจรจา' },
+  { key:'waiting',   em:'⏳',  title:'คนที่รอคอย' },
+  { key:'advice',    em:'💡',  title:'ข้อแนะนำ' },
+  { key:'liquidity', em:'💧',  title:'สภาพคล่อง' },
+  { key:'fortune',   em:'🍀',  title:'โชคลาภ' },
+];
+
+// คำตอบชัดเจนแบบฟันธง ต่อระดับดวง (0=ต้องระวังยิ่ง ... 4=มงคลยิ่ง)
+const VERDICTS = [
+  '❌ ยังไม่ควรทำ',
+  '⚠️ ทำได้แต่ระวัง',
+  '➖ รอดูก่อน',
+  '✅ ทำได้ โอกาสดี',
+  '🌟 ใช่ ลุยได้เลย',
+];
+
+// จับคำสำคัญในคำถาม เพื่อตอบให้ตรงประเด็นที่ถามจริง ไม่ใช้คำกลางๆ ที่กำกวม
+const KEYWORD_MAP = [
+  { key:'love',      words:['รัก','แฟน','คนรัก','แฟนเก่า','จีบ'] },
+  { key:'marriage',  words:['แต่งงาน','หมั้น','คู่ครอง','สามี','ภรรยา'] },
+  { key:'finance',   words:['เงิน','ทุน','หนี้','เก็บเงิน','กู้','ลงทุน'] },
+  { key:'liquidity', words:['สภาพคล่อง','เงินหมุน'] },
+  { key:'luck',      words:['หวย','เสี่ยงโชค','เล่นพนัน','ล็อตเตอรี่','บอล'] },
+  { key:'fortune',   words:['โชคลาภ','ลาภ','ถูกรางวัล'] },
+  { key:'travel',    words:['เดินทาง','ย้าย','ต่างประเทศ','บิน','ทริป'] },
+  { key:'negotiate', words:['เจรจา','ดีล','สัญญา','ต่อรอง','ลูกค้า'] },
+  { key:'waiting',   words:['รอคอย','รอข่าว','รอคำตอบ','ข่าว','ติดต่อกลับ','คนหาย'] },
+  { key:'wish',      words:['สำเร็จ','สมหวัง','ตั้งใจ','เป้าหมาย'] },
+  { key:'general',   words:['งาน','เรียน','สอบ','สุขภาพ','ธุรกิจ'] },
+];
+/* เลือกหมวดที่คำตรงยาวที่สุด (เจาะจงกว่า) — กันคำสั้นๆ เช่น "รอ" ไปทับหมวดอื่น */
+function detectCategory(question){
+  const q = (question || '').toLowerCase();
+  let best = 'general', score = 0;
+  for(const item of KEYWORD_MAP){
+    const s = item.words.reduce((m,w) => q.includes(w) ? Math.max(m, w.length) : m, 0);
+    if(s > score){ score = s; best = item.key; }
+  }
+  return best;
+}
+
+// ชื่อหมวดแบบเต็ม (รวม 'general' ที่ไม่ได้อยู่ใน TOPIC_LIST เพราะเป็นค่าเริ่มต้น)
+const CATEGORY_TITLES = { general:'สถานการณ์ทั่วไป' };
+TOPIC_LIST.forEach(t => { CATEGORY_TITLES[t.key] = t.title; });
+
+/* ---------- คลังคำอธิบายเชิงลึกสำหรับหน้า "ฟันธง" (กระชับ ตรงประเด็น ตามระดับดวง 0-4) ---------- */
+const TIER_ELABORATION = [
+  "แรงต้านยังมาก ฝืนตอนนี้อาจเหนื่อยเปล่า รอให้สถานการณ์คลี่คลายก่อน",
+  "จังหวะยังสั่นคลอน ตัดสินใจด้วยความรอบคอบ เผื่อแผนสำรองไว้เสมอ",
+  "อยู่ในภาวะสมดุล ผลลัพธ์สุดท้ายขึ้นอยู่กับการกระทำของท่านเป็นหลัก",
+  "มีสัญญาณสนับสนุนชัดเจน เหมาะแก่การลงมือทำอย่างมีสติ",
+  "พลังหยางแข็งแกร่ง เป็นจังหวะทองที่ควรคว้าไว้ แต่อย่าประมาท",
+];
+const ADVICE_ELABORATION = [
+  "หยุดพักทบทวนแผนก่อน หากไม่แน่ใจควรปรึกษาผู้มีประสบการณ์",
+  "ระวังการตัดสินใจหุนหันพลันแล่น ตรวจสอบข้อมูลให้รอบด้านก่อนเดินหน้า",
+  "ทำตามปกติด้วยความรอบคอบ ไม่จำเป็นต้องเร่งรีบ",
+  "ลงมือทำได้เลย เพียงเตรียมแผนสำรองไว้เผื่อสถานการณ์เปลี่ยน",
+  "คว้าโอกาสด้วยความมั่นใจ พร้อมรักษาความอ่อนน้อมถ่อมตนเสมอ",
+];
+// คำอธิบายความสัมพันธ์เชิงพลัง ตามเครื่องหมายของ wuxing bonus (-1 / 0 / 1)
+const IMAGE_BONUS_NARRATIVE = {
+  1:   "ธาตุเกื้อหนุนกัน พลังงานไหลลื่น เป็นสัญญาณที่ดี",
+  0:   "ธาตุเป็นกลางต่อกัน พลังงานยังทรงตัว",
+  '-1':"ธาตุขัดแย้งกันบ้าง พลังงานฝืด ต้องอาศัยความอดทน",
+};
+
+/* สร้างคำอธิบาย "ภาพพจน์" แบบละเอียดแต่กระชับ จากโครงสร้างตรีลักษณ์บน-ล่างจริงของเกวานั้นๆ */
+function buildDetailedImage(result){
+  const { upper, lower } = result;
+  const wux = wuxingRelation(lower.element, upper.element);
+  const narrative = IMAGE_BONUS_NARRATIVE[String(wux.bonus)];
+  const base = `เกวา "${result.name}" คือ ${upper.symbol}${upper.name}(${upper.meaning}·ธาตุ${upper.element}) เหนือ ${lower.symbol}${lower.name}(${lower.meaning}·ธาตุ${lower.element}) — ${wux.label} ${narrative}`;
+  const movingNote = result.changedName
+    ? ` 🔄 มีเส้นแปรผัน ${result.movingIdx.length} เส้น กำลังมุ่งสู่เกวา "${result.changedName}"`
+    : '';
+  return base + movingNote;
+}
+
+/* สร้าง "คำตอบฟันธง" แบบละเอียดแต่กระชับ อ้างอิงคำถามจริงของผู้ใช้และหมวดที่ตรวจพบ */
+function buildDetailedAnswer(result, question){
+  const category = detectCategory(question);
+  const catTitle = CATEGORY_TITLES[category];
+  const shortPhrase = result.topics[category] || result.topics.general;
+  const verdict = VERDICTS[result.tierIdx];
+  const qShown = question ? (clip(question,46)) : null;
+  const qLine = qShown ? `📌 "${qShown}" (หมวด${catTitle})` : `📌 ยังไม่ระบุคำถาม — แสดงภาพรวม`;
+  return `${qLine}\n${verdict} — ${shortPhrase} ${TIER_ELABORATION[result.tierIdx]}`;
+}
+
+/* สร้าง "คำแนะนำ" แบบละเอียดแต่กระชับ ผสานคำแนะนำสั้นเดิมเข้ากับคำอธิบายเชิงปฏิบัติ */
+function buildDetailedAdvice(result){
+  return `${result.topics.advice} ${ADVICE_ELABORATION[result.tierIdx]}`;
+}
+
+/* =========================================================================
+   สถานะแอป + ตัวช่วย
+   ========================================================================= */
+const $ = id => document.getElementById(id);
+const state = { lines:[], result:null, tossing:false, history:[] };
+const vibrate = p => { try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} };
+const clip = (s,n) => { const a = Array.from(s||''); return a.length>n ? a.slice(0,n).join('')+'…' : a.join(''); };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tierStyle = (el, t) => { el.style.color = t.color; el.style.background = t.color + '33'; };
+
+/* ปรับขนาดฟอนต์อัตโนมัติ (--k) ให้เนื้อหาพอดี 1 จอ ไม่ล้น — ถ้าจอเล็กมากจริงๆ main จะเลื่อนได้เป็นตาข่ายนิรภัย */
+function fit(){
+  const m = $('main'); let k = 1;
+  m.style.setProperty('--k', 1);
+  while(m.scrollHeight > m.clientHeight + 1 && k > 0.72){ k = +(k - 0.04).toFixed(2); m.style.setProperty('--k', k); }
+}
+const refit = () => requestAnimationFrame(fit);
+
+/* วาดเส้นเกวา 6 เส้น (ล่าง→บน): null = ช่องว่าง, newIdx = เส้นที่เพิ่งเกิดให้เล่นแอนิเมชัน, moving = เส้นแปรผัน */
+function renderHexagram(box, lines, o){
+  o = o || {}; box.innerHTML = '';
+  for(let i=0;i<6;i++){
+    const v = lines[i], el = document.createElement('div');
+    if(v === null || v === undefined){ el.className = 'hexline placeholder'; }
+    else{
+      el.className = 'hexline' + (v===0 ? ' yin' : '') + (o.newIdx===i ? ' draw' : '');
+      if(o.moving && o.moving.has(i)) el.classList.add('moving');
+    }
+    box.appendChild(el);
+  }
+}
+
+/* =========================================================================
+   คำนวณเกวา: ตรีลักษณ์บน/ล่าง + น้ำหนักตำแหน่ง + ปัญจธาตุ + เส้นแปรผัน (6/9)
+   input: array ของ 0/1 หรือ {value, sum}
+   ========================================================================= */
+function computeHexagram(input){
+  const values = input.map(l => typeof l === 'object' ? l.value : l);
+  const sums   = input.map(l => typeof l === 'object' ? l.sum : null);
+  const moving = []; sums.forEach((s,i) => { if(s===6 || s===9) moving.push(i); });
+  const lower = findTrigram(values.slice(0,3)), upper = findTrigram(values.slice(3,6));
+
+  let w = 0; values.forEach((v,i) => { w += (v===1 ? 1 : -1) * (i+1); });
+  sums.forEach(s => { if(s===9) w -= 0.5; if(s===6) w += 0.5; });
+  const wux = wuxingRelation(lower.element, upper.element);
+  const score = Math.min(1, Math.max(0, (w+21)/42 + wux.bonus*0.08));
+  const tierIdx = Math.min(4, Math.floor(score*5));
+
+  const code = parseInt(values.join(''), 2);
+  const pick = a => a[(code + tierIdx + moving.length) % a.length];
+  const topics = {}; Object.keys(BANK).forEach(k => { topics[k] = pick(BANK[k]); });
+
+  let changedName = null;
+  if(moving.length){
+    const cv = values.map((v,i) => moving.includes(i) ? 1-v : v);
+    changedName = `${findTrigram(cv.slice(3,6)).name}เหนือ${findTrigram(cv.slice(0,3)).name}`;
+  }
+  return { values, lower, upper, code, tierIdx, movingIdx:moving, changedName, topics,
+    name: `${upper.name}เหนือ${lower.name}`,
+    image: `${upper.symbol}${upper.name} เหนือ ${lower.symbol}${lower.name} — ${wux.label}` };
+}
+
+/* =========================================================================
+   หน้าแรก — เกวาประจำวัน (คงที่ตามวันที่)
+   ========================================================================= */
+function seedFromDate(d){
+  let x = d.getFullYear()*372 + (d.getMonth()+1)*31 + d.getDate(), bits = [];
+  for(let i=0;i<6;i++){ x = (x*9301 + 49297) % 233280; bits.push(x % 2); }
+  return bits;
+}
+function initDashboard(){
+  const today = new Date();
+  try{ $('dash-date').textContent = today.toLocaleDateString('th-TH', {weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
+  catch(e){ $('dash-date').textContent = today.toDateString(); }
+  const r = computeHexagram(seedFromDate(today));
+  renderHexagram($('dash-hex'), r.values);
+  $('dash-name').textContent = r.name;
+  $('dash-desc').textContent = `${r.upper.symbol}${r.lower.symbol} · เกวาที่ ${r.code+1}/64`;
+  $('dash-tier').textContent = `${TIERS[r.tierIdx].emoji} ${TIERS[r.tierIdx].label}`;
+  $('dash-tier').style.color = TIERS[r.tierIdx].color;
+  $('dash-yang').textContent = r.values.reduce((a,b) => a+b, 0);
+}
+
+/* การ์ดล่างของหน้าแรก: เปลี่ยนเป็น "ประวัติการทำนาย" (แตะดูซ้ำ) เมื่อมีผลแล้ว */
+function renderDashboardChips(){
+  if(!state.history.length) return;
+  $('dash-chip-title').textContent = '🕐 ประวัติการทำนายวันนี้ (แตะดูซ้ำ)';
+  const row = $('dash-chip-row'); row.innerHTML = '';
+  state.history.slice(0,6).forEach(entry => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = `${TIERS[entry.tierIdx].emoji} ${entry.name}`;
+    b.onclick = () => { state.result = entry; switchView('details'); };
+    row.appendChild(b);
+  });
+}
+
+/* =========================================================================
+   คำนวณ — โยนเหรียญ 3 เหรียญ/เส้น: หัว=3 ก้อย=2 → 6 หยินเก่า, 7 หยางอ่อน, 8 หยินอ่อน, 9 หยางเก่า
+   ========================================================================= */
+const EXAMPLE_QUESTIONS = [
+  'เช่น ความรักในช่วงนี้จะเป็นอย่างไร...','เช่น ควรลงทุนก้อนนี้ตอนนี้ไหม...','เช่น งานที่สมัครไว้จะได้ไหม...',
+  'เช่น ควรย้ายที่อยู่ตอนนี้ไหม...','เช่น ดีลนี้จะเจรจาสำเร็จไหม...','เช่น คนที่รอคำตอบจะว่าอย่างไร...',
+];
+const tossLabel = () => `🪙 โยนเหรียญ เส้นที่ ${state.lines.length + 1}`;
+
+function updateCalcUI(newIdx){
+  const n = state.lines.length;
+  renderHexagram($('calc-hex'), state.lines.map(l => l.value).concat(Array(6-n).fill(null)), { newIdx });
+  $('progress-fill').style.width = Math.round(n/6*100) + '%';
+  $('progress-label').textContent = n === 0 ? '⚪ ยังไม่ได้โยนเหรียญ (0/6 เส้น)' : `🪙 กำลังสร้างเกวา (${n}/6 เส้น)`;
+  $('undo-btn').style.display = (n > 0 && n < 6) ? 'flex' : 'none';
+  const btn = $('toss-btn'); btn.disabled = false; btn.textContent = tossLabel();
+}
+
+function resetCast(){
+  state.lines = []; state.tossing = false;
+  updateCalcUI();
+  $('question-input').placeholder = EXAMPLE_QUESTIONS[Math.floor(Math.random()*EXAMPLE_QUESTIONS.length)];
+  $('reset-btn').style.display = 'none';
+}
+
+function undoLine(){
+  if(state.tossing || !state.lines.length) return;
+  vibrate(12); state.lines.pop(); updateCalcUI();
+}
+
+function tossLine(){
+  if(state.tossing || state.lines.length >= 6) return; // กันแตะรัวจนเกิน 6 เส้น
+  state.tossing = true; $('toss-btn').disabled = true; vibrate(15);
+  let sum = 0;
+  ['coin1','coin2','coin3'].forEach(id => {
+    const el = $(id), head = Math.random() < 0.5;
+    el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip');
+    sum += head ? 3 : 2; el.textContent = head ? '陽' : '陰';
+  });
+  setTimeout(() => {
+    state.lines.push({ value: (sum===7 || sum===9) ? 1 : 0, sum });
+    state.tossing = false;
+    updateCalcUI(state.lines.length - 1);
+    if(state.lines.length === 6) finishCast();
+  }, 320);
+}
+
+function finishCast(){
+  vibrate([25,60,25,60,80]);
+  const btn = $('toss-btn'); btn.disabled = true; btn.textContent = '✅ เกวาสมบูรณ์แล้ว';
+  $('progress-label').textContent = '🎉 เปิดเกวาสำเร็จ — กำลังไปหน้า “สรุปผล”';
+  $('reset-btn').style.display = 'flex';
+  const r = computeHexagram(state.lines);
+  r.question = $('question-input').value.trim();
+  state.result = r;
+  state.history.unshift(r); if(state.history.length > 10) state.history.length = 10;
+  renderDashboardChips();
+  // เปลี่ยนหน้าอัตโนมัติ เฉพาะเมื่อผู้ใช้ยังอยู่หน้าคำนวณ (ไม่ดึงกลับถ้าสลับแท็บไปแล้ว)
+  setTimeout(() => { if($('view-calc').classList.contains('active')) switchView('details'); }, 700);
+}
+
+/* =========================================================================
+   แชร์ / คัดลอกผล — Web Share → Clipboard → execCommand (รองรับเบราว์เซอร์เก่า)
+   ========================================================================= */
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); return true; }catch(e){}
+  try{
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok;
+  }catch(e){ return false; }
+}
+function flash(btn, icon){
+  if(!btn) return;
+  if(!btn.dataset.ic) btn.dataset.ic = btn.textContent;
+  btn.textContent = icon;
+  setTimeout(() => { btn.textContent = btn.dataset.ic; }, 1400);
+}
+async function shareResult(btn){
+  const r = state.result; if(!r) return;
+  vibrate(10);
+  const text =
+    `☯️ อี้จิง: ${r.name} (${TIERS[r.tierIdx].label})\n🌌 ${r.image}\n` +
+    (r.changedName ? `🔄 แปรเกวาสู่: ${r.changedName}\n` : '') +
+    (r.question ? `📌 คำถาม: ${r.question}\n` : '') +
+    `${VERDICTS[r.tierIdx]} — ${r.topics[detectCategory(r.question)]}\n💡 คำแนะนำ: ${r.topics.advice}`;
+  try{
+    if(navigator.share){ await navigator.share({ title:'ผลทำนายอี้จิง', text }); flash(btn,'✅'); return; }
+  }catch(e){ if(e && e.name === 'AbortError') return; }
+  flash(btn, (await copyText(text)) ? '✅' : '⚠️');
+}
+
+/* =========================================================================
+   สรุปผล (12 หัวข้อ + ภาพพจน์ + ถาม-ตอบ) และ ฟันธง
+   ========================================================================= */
+function makeCell(cls, em, title, text){
+  const d = document.createElement('div');
+  d.className = 'topic-cell' + (cls ? ' ' + cls : '');
+  d.innerHTML = `<div class="ti">${em} ${esc(title)}</div><div class="tx">${esc(text)}</div>`;
+  return d;
+}
+function fillHeader(p, r){
+  renderHexagram($(p+'-hex'), r.values, { moving:new Set(r.movingIdx) });
+  $(p+'-name').textContent = r.name;
+  $(p+'-code').textContent = `${r.upper.symbol}${r.lower.symbol} · เกวาที่ ${r.code+1}/64` + (r.movingIdx.length ? ` · 🔄 แปรผัน ${r.movingIdx.length} เส้น` : '');
+  const b = $(p+'-tier'); b.textContent = `${TIERS[r.tierIdx].emoji} ${TIERS[r.tierIdx].label}`; tierStyle(b, TIERS[r.tierIdx]);
+}
+function toggleEmpty(prefix, has){
+  $(prefix+'-empty').style.display = has ? 'none' : 'flex';
+  $(prefix+'-content').style.display = has ? 'flex' : 'none';
+}
+
+function renderDetails(){
+  const r = state.result; toggleEmpty('details', !!r); if(!r) return;
+  fillHeader('det', r);
+  const g = $('topics-grid'); g.innerHTML = '';
+  g.appendChild(makeCell('full', '🌌', 'ภาพพจน์', r.image));
+  TOPIC_LIST.forEach(t => g.appendChild(makeCell('', t.em, t.title, r.topics[t.key])));
+  const qa = r.question
+    ? `${VERDICTS[r.tierIdx]} — “${clip(r.question,22)}”: ${r.topics[detectCategory(r.question)]}`
+    : `${VERDICTS[r.tierIdx]} — พิมพ์คำถามในหน้าคำนวณเพื่อคำตอบที่ตรงประเด็นยิ่งขึ้น`;
+  g.appendChild(makeCell('full', '❓', 'คำถาม-คำตอบ (ฟันธง)', qa));
+}
+
+function renderVerdict(){
+  const r = state.result; toggleEmpty('verdict', !!r); if(!r) return;
+  fillHeader('vd', r);
+  $('vd-image-text').textContent  = buildDetailedImage(r);
+  $('vd-answer-text').textContent = buildDetailedAnswer(r, r.question);
+  $('vd-advice-text').textContent = buildDetailedAdvice(r);
+}
+
+/* =========================================================================
+   นำทาง + เริ่มต้นแอป
+   ========================================================================= */
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-'+name));
+  document.querySelectorAll('nav.tabbar button').forEach(b => {
+    const on = b.dataset.view === name; b.classList.toggle('active', on); b.setAttribute('aria-current', on ? 'page' : 'false');
+  });
+  if(name === 'details') renderDetails();
+  if(name === 'verdict') renderVerdict();
+  $('main').scrollTop = 0;
+  refit();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initDashboard(); resetCast(); fit();
+  window.addEventListener('resize', refit);
+  window.addEventListener('orientationchange', refit);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
+});
+</script>
+</body>
+</html>
